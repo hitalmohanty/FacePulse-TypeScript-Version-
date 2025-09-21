@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FacePulse - Face Recognition Attendance System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div id="animated-background" class="animated-background">
+        <div class="gradient-bg"></div>
+        <div class="particles-container"></div>
+        <div class="geometric-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+        <svg id="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+        </svg>
+        <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+        </svg>
+    </button>
+
+    <!-- Main Container -->
+    <main id="main-container">
+        
+        <!-- Login Page -->
+        <section id="login-page" class="page active">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-header">
+                        <img src="attached_assets/facepulse_logo_transparent_1758383394665.png" alt="FacePulse Logo" class="logo">
+                        <h1 class="app-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            FacePulse
+                        </h1>
+                        <p class="app-subtitle">Face Recognition Attendance System</p>
+                    </div>
+                    
+                    <div class="role-selector">
+                        <button class="role-btn active" data-role="student">Student</button>
+                        <button class="role-btn" data-role="teacher">Teacher</button>
+                    </div>
+                    
+                    <form id="login-form" class="login-form">
+                        <div class="input-group">
+                            <label for="username">Username</label>
+                            <div class="input-wrapper">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <div class="input-wrapper">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <circle cx="12" cy="16" r="1"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="login-btn" id="login-btn">
+                            <span id="btn-text">Sign In as Student</span>
+                            <div id="btn-loader" class="loader" style="display: none;"></div>
+                        </button>
+                    </form>
+                    
+                    <div class="demo-credentials">
+                        <p>Demo Credentials:</p>
+                        <p>Student: student / student123</p>
+                        <p>Teacher: teacher / teacher123</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Face Scan Page -->
+        <section id="face-scan-page" class="page">
+            <div class="scan-container">
+                <div class="scan-header">
+                    <div class="header-content">
+                        <h1 class="page-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            Face Recognition Scan
+                        </h1>
+                        <p class="page-subtitle">Position your face within the scanning area for attendance verification</p>
+                    </div>
+                    <button id="back-btn" class="back-btn">Back</button>
+                </div>
+                
+                <div class="scan-content">
+                    <div class="camera-section">
+                        <div class="camera-container">
+                            <video id="camera-feed" autoplay playsinline muted></video>
+                            <div class="scan-overlay">
+                                <div id="face-circle" class="face-circle"></div>
+                                <div id="face-box" class="face-box" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="controls-section">
+                        <div class="status-display">
+                            <div id="scan-status" class="scan-status">
+                                <svg id="status-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2v11z"/>
+                                    <circle cx="12" cy="13" r="4"/>
+                                </svg>
+                                <span id="status-text">Position your face in the center</span>
+                            </div>
+                            
+                            <div id="progress-container" class="progress-container" style="display: none;">
+                                <div class="progress-bar">
+                                    <div id="progress-fill" class="progress-fill"></div>
+                                </div>
+                                <span id="progress-text" class="progress-text">0% Complete</span>
+                            </div>
+                        </div>
+
+                        <div id="student-info" class="student-info" style="display: none;">
+                            <h3>Student Identified</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">Name:</span>
+                                    <span id="student-name" class="info-value">John Doe</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">ID:</span>
+                                    <span id="student-id" class="info-value">STU001</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Program:</span>
+                                    <span id="student-program" class="info-value">Computer Science</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Year:</span>
+                                    <span id="student-year" class="info-value">3rd Year</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Today's Attendance:</span>
+                                    <span class="attendance-badge">Marking Present</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="scan-controls">
+                            <button id="start-scan-btn" class="scan-btn primary">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                Start Face Scan
+                            </button>
+                            <button id="scan-again-btn" class="scan-btn secondary" style="display: none;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 4v6h6"/>
+                                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                                </svg>
+                                Scan Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Student Dashboard -->
+        <section id="student-dashboard" class="page">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <div class="user-info">
+                        <div class="avatar">JD</div>
+                        <div class="user-details">
+                            <h1 id="student-welcome">Welcome, John Doe</h1>
+                            <p id="student-details">Computer Science • 3rd Year • ID: STU001</p>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button id="mark-attendance-btn" class="action-btn primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            Mark Attendance
+                        </button>
+                        <button id="student-logout-btn" class="action-btn secondary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16,17 21,12 16,7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div id="total-classes" class="stat-number">45</div>
+                            <div class="stat-label">Total Classes</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12,6 12,12 16,14"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div id="attended-classes" class="stat-number">38</div>
+                            <div class="stat-label">Classes Attended</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div id="attendance-rate" class="stat-number">84%</div>
+                            <div class="stat-label">Attendance Rate</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div id="today-status" class="stat-badge present">Present</div>
+                            <div class="stat-label">Today's Status</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-content">
+                    <div class="progress-section">
+                        <div class="section-card">
+                            <h3>Attendance Progress</h3>
+                            <p class="section-subtitle">Your attendance across all subjects</p>
+                            
+                            <div class="progress-display">
+                                <div class="overall-progress">
+                                    <div class="progress-bar large">
+                                        <div id="overall-progress" class="progress-fill" style="width: 84%;"></div>
+                                    </div>
+                                    <div class="progress-info">
+                                        <span class="progress-percentage">84%</span>
+                                        <span class="progress-details">38 out of 45 classes attended</span>
+                                    </div>
+                                </div>
+
+                                <div class="weekly-breakdown">
+                                    <h4>Weekly Breakdown</h4>
+                                    <div class="weekly-stats">
+                                        <div class="week-item">
+                                            <span class="week-label">Week 1</span>
+                                            <div class="progress-bar small">
+                                                <div class="progress-fill" style="width: 85%;"></div>
+                                            </div>
+                                            <span class="week-percentage">85%</span>
+                                        </div>
+                                        <div class="week-item">
+                                            <span class="week-label">Week 2</span>
+                                            <div class="progress-bar small">
+                                                <div class="progress-fill" style="width: 92%;"></div>
+                                            </div>
+                                            <span class="week-percentage">92%</span>
+                                        </div>
+                                        <div class="week-item">
+                                            <span class="week-label">Week 3</span>
+                                            <div class="progress-bar small">
+                                                <div class="progress-fill" style="width: 78%;"></div>
+                                            </div>
+                                            <span class="week-percentage">78%</span>
+                                        </div>
+                                        <div class="week-item">
+                                            <span class="week-label">Week 4</span>
+                                            <div class="progress-bar small">
+                                                <div class="progress-fill" style="width: 95%;"></div>
+                                            </div>
+                                            <span class="week-percentage">95%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-section">
+                        <div class="section-card">
+                            <h3>Recent Attendance</h3>
+                            <p class="section-subtitle">Your attendance record for the past week</p>
+                            
+                            <div class="attendance-list">
+                                <div class="attendance-item">
+                                    <div class="item-info">
+                                        <div class="subject-name">Computer Science</div>
+                                        <div class="item-date">2024-01-15</div>
+                                    </div>
+                                    <div class="attendance-badge present">Present</div>
+                                </div>
+                                <div class="attendance-item">
+                                    <div class="item-info">
+                                        <div class="subject-name">Mathematics</div>
+                                        <div class="item-date">2024-01-14</div>
+                                    </div>
+                                    <div class="attendance-badge present">Present</div>
+                                </div>
+                                <div class="attendance-item">
+                                    <div class="item-info">
+                                        <div class="subject-name">Physics</div>
+                                        <div class="item-date">2024-01-13</div>
+                                    </div>
+                                    <div class="attendance-badge absent">Absent</div>
+                                </div>
+                                <div class="attendance-item">
+                                    <div class="item-info">
+                                        <div class="subject-name">Chemistry</div>
+                                        <div class="item-date">2024-01-12</div>
+                                    </div>
+                                    <div class="attendance-badge present">Present</div>
+                                </div>
+                                <div class="attendance-item">
+                                    <div class="item-info">
+                                        <div class="subject-name">English</div>
+                                        <div class="item-date">2024-01-11</div>
+                                    </div>
+                                    <div class="attendance-badge present">Present</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="section-card">
+                        <h3>Quick Actions</h3>
+                        <p class="section-subtitle">Frequently used features and shortcuts</p>
+                        
+                        <div class="actions-grid">
+                            <button class="action-card" id="action-mark-attendance">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <span class="action-title">Mark Attendance</span>
+                                <span class="action-subtitle">Scan your face to mark present</span>
+                            </button>
+                            
+                            <button class="action-card" id="action-view-schedule">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="16" y1="2" x2="16" y2="6"/>
+                                    <line x1="8" y1="2" x2="8" y2="6"/>
+                                    <line x1="3" y1="10" x2="21" y2="10"/>
+                                </svg>
+                                <span class="action-title">View Schedule</span>
+                                <span class="action-subtitle">Check your class timetable</span>
+                            </button>
+                            
+                            <button class="action-card" id="action-download-report">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                                </svg>
+                                <span class="action-title">Download Report</span>
+                                <span class="action-subtitle">Get your attendance summary</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Teacher Dashboard -->
+        <section id="teacher-dashboard" class="page">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <div class="user-info">
+                        <div class="avatar">SJ</div>
+                        <div class="user-details">
+                            <h1 id="teacher-welcome">Welcome, Dr. Sarah Johnson</h1>
+                            <p id="teacher-details">Computer Science Department • ID: TCH001</p>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button id="teacher-logout-btn" class="action-btn secondary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16,17 21,12 16,7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">127</div>
+                            <div class="stat-label">Total Students</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">98</div>
+                            <div class="stat-label">Present Today</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">87%</div>
+                            <div class="stat-label">Avg Attendance</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">15</div>
+                            <div class="stat-label">Classes This Week</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="teacher-tabs">
+                    <div class="tab-nav">
+                        <button class="tab-btn active" data-tab="students">Students</button>
+                        <button class="tab-btn" data-tab="classes">Classes</button>
+                        <button class="tab-btn" data-tab="reports">Reports</button>
+                    </div>
+
+                    <!-- Students Tab -->
+                    <div id="students-tab" class="tab-content active">
+                        <div class="section-card">
+                            <div class="section-header">
+                                <div>
+                                    <h3>Student Management</h3>
+                                    <p class="section-subtitle">View and manage student attendance records</p>
+                                </div>
+                                <button class="add-btn">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                    Add Student
+                                </button>
+                            </div>
+
+                            <div class="filters">
+                                <div class="search-wrapper">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="M21 21l-4.35-4.35"/>
+                                    </svg>
+                                    <input type="text" id="student-search" placeholder="Search students..." class="search-input">
+                                </div>
+                                <select id="subject-filter" class="filter-select">
+                                    <option value="all">All Subjects</option>
+                                    <option value="data-structures">Data Structures</option>
+                                    <option value="algorithms">Algorithms</option>
+                                    <option value="database">Database Systems</option>
+                                    <option value="software-eng">Software Engineering</option>
+                                </select>
+                            </div>
+
+                            <div class="table-container">
+                                <div class="table-header">
+                                    <div class="col">Student</div>
+                                    <div class="col">ID</div>
+                                    <div class="col">Program</div>
+                                    <div class="col">Year</div>
+                                    <div class="col">Attendance</div>
+                                    <div class="col">Status</div>
+                                </div>
+                                <div class="table-body" id="students-table-body">
+                                    <!-- Student rows will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Classes Tab -->
+                    <div id="classes-tab" class="tab-content">
+                        <div class="section-card">
+                            <div class="section-header">
+                                <div>
+                                    <h3>Class Sessions</h3>
+                                    <p class="section-subtitle">View attendance for your class sessions</p>
+                                </div>
+                                <button class="add-btn">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                    New Class
+                                </button>
+                            </div>
+
+                            <div class="classes-list" id="classes-list">
+                                <!-- Class items will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports Tab -->
+                    <div id="reports-tab" class="tab-content">
+                        <div class="section-card">
+                            <h3>Attendance Reports</h3>
+                            <p class="section-subtitle">Generate and download attendance reports</p>
+
+                            <div class="reports-grid">
+                                <div class="report-card">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7,10 12,15 17,10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    <h4>Weekly Report</h4>
+                                    <p>Download attendance summary for this week</p>
+                                    <button class="download-btn">Download Weekly Report</button>
+                                </div>
+
+                                <div class="report-card">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7,10 12,15 17,10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    <h4>Monthly Report</h4>
+                                    <p>Download comprehensive monthly attendance report</p>
+                                    <button class="download-btn">Download Monthly Report</button>
+                                </div>
+                            </div>
+
+                            <div class="custom-report">
+                                <div class="section-card">
+                                    <h4>Custom Report</h4>
+                                    <p class="section-subtitle">Generate a custom report with specific filters</p>
+                                    
+                                    <div class="custom-filters">
+                                        <select class="filter-select">
+                                            <option value="">Select Subject</option>
+                                            <option value="data-structures">Data Structures</option>
+                                            <option value="algorithms">Algorithms</option>
+                                            <option value="database">Database Systems</option>
+                                            <option value="software-eng">Software Engineering</option>
+                                        </select>
+                                        
+                                        <select class="filter-select">
+                                            <option value="">Select Period</option>
+                                            <option value="week">This Week</option>
+                                            <option value="month">This Month</option>
+                                            <option value="semester">This Semester</option>
+                                        </select>
+                                        
+                                        <button class="generate-btn">Generate Report</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
